@@ -45,6 +45,7 @@ func main() {
 		userRepo,
 		sessionRepo,
 		serviceRepo,
+		cfg.JWTIssuer,
 		privateKey,
 	)
 

@@ -11,9 +11,7 @@ type AuthHandler struct {
 	authService *services.AuthService
 }
 
-func NewAuthHandler(
-	authService *services.AuthService,
-) *AuthHandler {
+func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 
 	return &AuthHandler{
 		authService: authService,
@@ -50,7 +48,6 @@ func (h *AuthHandler) Register(
 	)
 
 	if err != nil {
-
 		http.Error(
 			w,
 			err.Error(),

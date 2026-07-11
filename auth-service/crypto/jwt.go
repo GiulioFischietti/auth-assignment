@@ -1,7 +1,6 @@
 package crypto
 
 import (
-	"auth-service/config"
 	"strconv"
 	"time"
 
@@ -24,13 +23,14 @@ type Claims struct {
 func GenerateJWT(
 	userID int64,
 	service string,
+	issuer string,
 	privateKey interface{},
 ) (string, error) {
 
 	claims := Claims{
 
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer: config.App.JWTIssuer,
+			Issuer: issuer,
 
 			Subject: strconv.FormatInt(
 				userID,

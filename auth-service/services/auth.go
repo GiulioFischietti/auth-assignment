@@ -22,6 +22,7 @@ func NewAuthService(
 	users repositories.UserRepository,
 	sessions repositories.SessionRepository,
 	services repositories.ServiceRepository,
+	issuer string,
 	privateKey interface{},
 ) *AuthService {
 
@@ -30,6 +31,7 @@ func NewAuthService(
 		sessions:   sessions,
 		services:   services,
 		privateKey: privateKey,
+		issuer:     issuer,
 	}
 }
 
@@ -148,6 +150,7 @@ func (a *AuthService) CreateAccessToken(
 	return crypto.GenerateJWT(
 		session.UserID,
 		service.Name,
+		a.issuer,
 		a.privateKey,
 	)
 }
@@ -169,10 +172,16 @@ func (a *AuthService) Register(
 		PasswordHash: passwordHash,
 	}
 
-	return a.users.Create(
+	err = a.users.Create(
 		ctx,
 		user,
 	)
+
+	if err != nil {
+		return errors.New("your request could not be processed")
+	}
+
+	return nil
 }
 
 func (a *AuthService) Logout(
