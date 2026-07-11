@@ -13,10 +13,10 @@ RUN go mod download
 COPY . .
 
 
-RUN go build -o auth-service .
+RUN go build -o protected-service .
 
 
-EXPOSE 8080
+EXPOSE 8081
 
 
-CMD ["./auth-service"]
+CMD ["./protected-service"]
