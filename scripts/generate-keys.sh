@@ -4,6 +4,9 @@ set -e
 
 echo "Generating RSA keys..."
 
+mkdir -p auth-service/keys
+mkdir -p protected-service/keys
+
 echo "Generating private key..."
 
 openssl genpkey \
