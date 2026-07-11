@@ -16,7 +16,7 @@ type Claims struct {
 // generates a jwt with this payload (example):
 //
 //	{
-//	 "user_id":10,
+//	 "sub":10,
 //	 "aud":"orders-service",
 //	 "exp":1752190000
 //	}
