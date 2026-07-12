@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -34,15 +33,16 @@ func (r *cachedSessionRepository) FindByTokenHash(
 
 	key := "session:" + hash
 
-	data, err := r.redis.Get(ctx, key).Bytes()
+	data, err := r.redis.Get(ctx, key).Int()
 
 	if err == nil {
-		log.Printf("session was already available in cache with value %s", string(data))
-		var session models.Session
-
-		if err := json.Unmarshal(data, &session); err == nil {
-			return &session, nil
+		log.Printf("session was already available in cache with value %d", data)
+		var session = models.Session{
+			SessionTokenHash: hash,
+			Cached:           true,
+			UserID:           int64(data),
 		}
+		return &session, nil
 	}
 
 	log.Print("session was NOT available in cache, retrieving persisted value...")
@@ -52,14 +52,12 @@ func (r *cachedSessionRepository) FindByTokenHash(
 		return nil, err
 	}
 
-	bytes, _ := json.Marshal(session)
-
 	ttl := time.Until(session.ExpiresAt)
 
 	r.redis.Set(
 		ctx,
 		key,
-		bytes,
+		session.UserID,
 		ttl,
 	)
 
@@ -79,14 +77,12 @@ func (r *cachedSessionRepository) Create(
 
 	key := "session:" + session.SessionTokenHash
 
-	bytes, _ := json.Marshal(session)
-
 	ttl := time.Until(session.ExpiresAt)
 
 	r.redis.Set(
 		ctx,
 		key,
-		bytes,
+		session.UserID,
 		ttl,
 	)
 

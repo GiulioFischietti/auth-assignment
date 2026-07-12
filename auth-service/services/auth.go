@@ -103,6 +103,12 @@ func (a *AuthService) ValidateSession(
 		return nil, errors.New("invalid session")
 	}
 
+	// if session is cached, we don't need to check revoked field.
+	// In redis, if a session token has been revoked, it is simply removed
+	if session.Cached {
+		return session, nil
+	}
+
 	if session.RevokedAt != nil {
 		return nil, errors.New("session revoked")
 	}
