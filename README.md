@@ -39,3 +39,7 @@ If for any reason it fails (for example due to windows CRLF in .sh), follow the 
 5. Run the project with docker compose
 
 `docker compose up --build`
+
+## Database seed
+
+Database seed is performed automatically at docker compose startup.
