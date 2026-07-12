@@ -33,13 +33,37 @@ func main() {
 		log.Print("database connected daje")
 	}
 
+	redisClient, err := database.ConnectRedis(cfg)
+
+	if err != nil {
+		log.Fatal("redis connection failed:", err)
+	} else {
+		log.Println("redis connected daje")
+	}
+
+	defer redisClient.Close()
+
 	defer db.Close()
 
 	userRepo := repositories.NewUserRepository(db)
 
-	sessionRepo := repositories.NewSessionRepository(db)
+	// persisted session repository (postgres)
+	persistedSessionRepo := repositories.NewPersistedSessionRepository(db)
 
-	serviceRepo := repositories.NewServiceRepository(db)
+	// decorator of persistence session repo, in which we add cached sessions (redis)
+	sessionRepo := repositories.NewCachedSessionRepository(
+		persistedSessionRepo,
+		redisClient,
+	)
+
+	// persisted service repository for registry (postgres)
+	servicePersistenceRepo := repositories.NewPersistedServiceRepository(db)
+
+	// decorator for cached service registry (redis)
+	serviceRepo := repositories.NewCachedServiceRepository(
+		servicePersistenceRepo,
+		redisClient,
+	)
 
 	authService := services.NewAuthService(
 		userRepo,

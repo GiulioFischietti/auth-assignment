@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,11 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+
+	RedisHost     string
+	RedisPort     string
+	RedisPassword string
+	RedisDB       int
 
 	PrivateKeyPath string
 	PublicKeyPath  string
@@ -38,6 +44,11 @@ func Load() *Config {
 		DBPassword: getEnv("DB_PASSWORD", "postgres"),
 		DBName:     getEnv("DB_NAME", "auth_db"),
 
+		RedisHost:     getEnv("REDIS_HOST", "localhost"),
+		RedisPort:     getEnv("REDIS_PORT", "6379"),
+		RedisPassword: getEnv("REDIS_PASSWORD", ""),
+		RedisDB:       getEnvInt("REDIS_DB", 0),
+
 		PrivateKeyPath: getEnv("PRIVATE_KEY_PATH", "./keys/private.pem"),
 		PublicKeyPath:  getEnv("PUBLIC_KEY_PATH", "./keys/public.pem"),
 
@@ -58,4 +69,21 @@ func getEnv(key string, fallback string) string {
 	}
 
 	return value
+}
+
+func getEnvInt(key string, fallback int) int {
+
+	value := os.Getenv(key)
+
+	if value == "" {
+		return fallback
+	}
+
+	number, err := strconv.Atoi(value)
+
+	if err != nil {
+		return fallback
+	}
+
+	return number
 }

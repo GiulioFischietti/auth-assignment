@@ -57,7 +57,7 @@ func TestGenerateJWT(t *testing.T) {
 				token *jwt.Token,
 			) (interface{}, error) {
 
-				// controllo algoritmo
+				// check algorithm field claim
 
 				if token.Method.Alg() != "RS256" {
 
@@ -96,7 +96,7 @@ func TestGenerateJWT(t *testing.T) {
 		)
 	}
 
-	// controllo subject
+	// check subject field claim
 
 	if claims["sub"] != "123" {
 
@@ -106,7 +106,7 @@ func TestGenerateJWT(t *testing.T) {
 		)
 	}
 
-	// controllo issuer
+	// check issuer field claim
 
 	if claims["iss"] != "auth-service" {
 
@@ -116,7 +116,7 @@ func TestGenerateJWT(t *testing.T) {
 		)
 	}
 
-	// controllo audience
+	// check audience field claim
 
 	aud, ok :=
 		claims["aud"].([]interface{})
@@ -136,7 +136,7 @@ func TestGenerateJWT(t *testing.T) {
 		)
 	}
 
-	// controllo expiration
+	// check expiration field claim
 
 	exp, ok :=
 		claims["exp"].(float64)

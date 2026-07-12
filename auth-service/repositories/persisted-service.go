@@ -8,20 +8,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type serviceRepository struct {
+type persistedServiceRepository struct {
 	db *pgxpool.Pool
 }
 
-func NewServiceRepository(
+func NewPersistedServiceRepository(
 	db *pgxpool.Pool,
 ) ServiceRepository {
 
-	return &serviceRepository{
+	return &persistedServiceRepository{
 		db: db,
 	}
 }
 
-func (r *serviceRepository) FindByName(
+func (r *persistedServiceRepository) FindByName(
 	ctx context.Context,
 	name string,
 ) (*models.Service, error) {

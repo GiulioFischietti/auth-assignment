@@ -8,17 +8,17 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type sessionRepository struct {
+type persistedSessionRepository struct {
 	db *pgxpool.Pool
 }
 
-func NewSessionRepository(db *pgxpool.Pool) SessionRepository {
-	return &sessionRepository{
+func NewPersistedSessionRepository(db *pgxpool.Pool) SessionRepository {
+	return &persistedSessionRepository{
 		db: db,
 	}
 }
 
-func (r *sessionRepository) Create(
+func (r *persistedSessionRepository) Create(
 	ctx context.Context,
 	session *models.Session,
 ) error {
@@ -42,7 +42,7 @@ func (r *sessionRepository) Create(
 	).Scan(&session.ID)
 }
 
-func (r *sessionRepository) FindByTokenHash(
+func (r *persistedSessionRepository) FindByTokenHash(
 	ctx context.Context,
 	hash string,
 ) (*models.Session, error) {
@@ -79,7 +79,7 @@ func (r *sessionRepository) FindByTokenHash(
 	return session, nil
 }
 
-func (r *sessionRepository) Revoke(
+func (r *persistedSessionRepository) Revoke(
 	ctx context.Context,
 	hash string,
 ) error {

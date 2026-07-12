@@ -1,0 +1,35 @@
+services:
+
+  postgres:
+    image: postgres:16
+
+    container_name: auth-postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+
+    container_name: auth-redis
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+volumes:
+
+  postgres_data:
+
+  redis_data:
