@@ -38,7 +38,7 @@ func (r *cachedServiceRepository) FindByName(
 	).Bool()
 
 	if err == nil {
-		log.Printf("cached service found in cache with value %s", data)
+		log.Printf("cached service found in cache with value %t", data)
 		service := &models.Service{
 			Name:   name,
 			Active: data,
