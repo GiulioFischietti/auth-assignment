@@ -83,22 +83,23 @@ This approach also improves scalability by allowing each protected service to va
 
 One trade-off of this design is that a JWT may remain valid for a short period even after the corresponding session has expired or been revoked. In this implementation, access tokens have a short lifetime (5 minutes), limiting this window of exposure. This compromise is common in stateless authentication systems and enables protected services to operate independently while maintaining a high level of security.
 
+## 4. Data Model
 
-## 4. Service Responsibilities
+## 5. Framework and Language choice
 
 
-## 5. Data Architecture
-### 5.1 PostgreSQL
-### 5.2 Redis
-### 5.3 MongoDB
+## 6. DB Architecture
+### 6.1 PostgreSQL
+### 6.2 Redis
+### 6.3 MongoDB
 
-## 6. Request Flows
-### 6.1 Registration
-### 6.2 Login
-### 6.3 Protected Request
+## 7. Request Flows
+### 7.1 Registration
+### 7.2 Login
+### 7.3 Protected Request
 
-## 7. Security Considerations
+## 8. Security Considerations
 
-## 8. Scalability Considerations
+## 9. Scalability Considerations
 
-## 9. Future Improvements
+## 10. Possible Improvements
