@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	"auth-service/models"
@@ -36,19 +35,15 @@ func (r *cachedServiceRepository) FindByName(
 	data, err := r.redis.Get(
 		ctx,
 		key,
-	).Bytes()
+	).Bool()
 
 	if err == nil {
-		log.Printf("cached service found in cache with value %s", string(data))
-		service := &models.Service{}
-
-		if err := json.Unmarshal(
-			data,
-			service,
-		); err == nil {
-
-			return service, nil
+		log.Printf("cached service found in cache with value %s", data)
+		service := &models.Service{
+			Name:   name,
+			Active: data,
 		}
+		return service, nil
 	}
 
 	log.Print("cached service NOT found in cache! retrieving it from postgres...")
@@ -61,16 +56,12 @@ func (r *cachedServiceRepository) FindByName(
 		return nil, err
 	}
 
-	bytes, err := json.Marshal(service)
-
-	if err == nil {
-		r.redis.Set(
-			ctx,
-			key,
-			bytes,
-			0,
-		)
-	}
+	r.redis.Set(
+		ctx,
+		key,
+		true,
+		0,
+	)
 
 	return service, nil
 }
