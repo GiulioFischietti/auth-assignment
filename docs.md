@@ -19,7 +19,7 @@ Different data storage technologies are used according to their specific purpose
 The chosen language for auth-service is **Go**, as it provides a strong balance between performance, simplicity and operational efficiency, making it well suited for distributed systems and microservice architectures.
 
 ## 2. High Level Architecture
-
+<img src="/images/architecture.png" alt="Alt Text" style="height:500px;">
 
 ## 3. Authentication
 This is the main focus of this project. 
