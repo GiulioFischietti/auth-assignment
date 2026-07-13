@@ -3,6 +3,8 @@ In this document it is shown the main design architectural choices for this home
 
 ## 1. Overview
 
+TODO: generalize this
+
 The objective of this assignment is to design and implement an auth service that returns temporary credentials to access protected services.
 
 This project implements a distributed authentication system composed of two independent backend services:
@@ -186,7 +188,7 @@ This approach provides several advantages:
 
 # 4.3 PostgreSQL Data Model and Design Choices
 
-note: check and include useful indexes!
+TODO: check and include useful indexes!
 
 PostgreSQL is used as the authoritative datastore for authentication data.
 
