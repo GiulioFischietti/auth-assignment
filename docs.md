@@ -342,22 +342,31 @@ This avoids repeated database lookups during token generation while keeping Post
 Because service registration changes are administrative operations rather than runtime events, cache invalidation can be handled explicitly when services are added, removed or disabled.
 
 ## 5. Request Flow
-TODO: explain in detail the steps involved in the auth service, describing impleemntation details such as db writes, consistency etc.
+In this section it is explained the request flow, showing which services act and how.
+
+In such flows we want to obtain in general consistent writes, and fast reads, exploiting SQL transactions for critical but sporadic write operations, while fast reads in cache for frequent operations.
 
 ### 5.1 Register
+Registration is very simple: the user chooses a username/password pair and sends it to the auth service, which tries to save into user table. 
+If success, a success response is sent to the user.
 
 <img src="./images/register.png" alt="Register">
 
 ### 5.2 Log In
-TODO: explain the login flow and writes to postgres/redis, and also the fact that if postgres fails, the operation fails. 
-Postgres ACID transactions are exploited to keep consistency
+In the log in we exploit SQL transaction to ensure consistency: when the user succesfully logs in, a session token is generated and it is saved in postgres session table. If such operation completes succesfully, the session token is returned to the user while being saved in redis cache for faster access (with a TTL equal to the life of the session token), when for example creating short lived tokens, which is by definition a much frequent operation.
+If the insert in postgres fails, the whole operation rolls back, returning an error message to the user, to ensure consistency.
 
 <img src="./images/login.png" alt="Log In">
 
 ### 5.3 Token
+In this request the user asks for an access token, which allows it to access a specific protected service.
+First, its session token must be validated: it is searched in redis db and if found, the auth service generates an access token which is returned to the user. If not found, such token is searched in Postgres Session table and if found, it is stored in redis and a new access token is sent to the user.
+Otherwise, an error is returned.
+
 <img src="./images/token.png" alt="Token">
 
 ### 5.4 Log Out
+When logging out the field expires_at in session table in postgres is updated and the session token is removed from redis cache.
 <img src="./images/logout.png" alt="Log Out">
 
 ## 6. Security Considerations
