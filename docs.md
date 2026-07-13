@@ -195,7 +195,7 @@ This approach provides several advantages:
 
 TODO: 
  - check and include useful indexes!
- - justify its usage very carefully: we want acid properties for such a critical point. We want CAP consistency. In future implementations with roles, relations are useful and referencial consistency in this sense is important (ghost roles are not good in such a critical scope).
+ - justify its usage very carefully: we want acid properties for such a critical point. We want CAP consistency. In future implementations with roles, relations are useful and referencial consistency in this sense is important (ghost roles are not good in such a critical scope). What if the user updates its role? We should manage it manually in mongo, but not here in postgres.
    
 PostgreSQL is used as the authoritative datastore for authentication data.
 
