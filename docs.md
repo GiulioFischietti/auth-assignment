@@ -335,8 +335,15 @@ This avoids repeated database lookups during token generation while keeping Post
 
 Because service registration changes are administrative operations rather than runtime events, cache invalidation can be handled explicitly when services are added, removed or disabled.
 
+## 5. Request Flow
+TODO: explain in detail the steps involved in the auth service, describing impleemntation details such as db writes, consistency etc.
 
-## 5. Security Considerations
+### 5.1 Register
+### 5.2 Log In
+### 5.3 Token
+### 5.4 Log Out
+
+## 6. Security Considerations
 Show image of many nodes, with the private key only in the auth service.
 Hashed passwords
 Public keys in nodes
@@ -344,6 +351,6 @@ Hashed sessions
 HTTPS not enabled yet
 ...
 
-## 6. Scalability Considerations
+## 7. Scalability Considerations
 
-## 7. Possible Improvements
+## 8. Possible Improvements
