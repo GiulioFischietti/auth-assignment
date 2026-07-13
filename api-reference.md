@@ -1,6 +1,20 @@
+# Table of Contents
+
+* [1. Authentication Service](#1-authentication-service)
+
+  * [1.1 Health Check](#11-health-check)
+  * [1.2 Register User](#12-register-user)
+  * [1.3 Login](#13-login)
+  * [1.4 Generate Access Token](#14-generate-access-token)
+
+* [2. Protected Service](#2-protected-service)
+
+  * [2.1 Get Orders](#21-get-orders)
+
+
 # API Reference
 
-## Authentication Service
+## [1. Authentication Service](#1-authentication-service)
 
 Base URL
 
@@ -10,7 +24,45 @@ http://localhost:8080
 
 ---
 
-### Register User
+## [1.1 Health Check](#11-health-check)
+
+Returns the current status of the service.
+
+This endpoint does not require authentication and is intended for monitoring purposes, container health checks and service availability verification.
+
+| Property       | Value        |
+| -------------- | ------------ |
+| Method         | `GET`        |
+| Endpoint       | `/health`    |
+| Authentication | Not required |
+
+### cURL Example
+
+```bash
+curl --location 'http://localhost:8080/health'
+```
+
+### Successful Response
+
+**200 OK**
+
+```json
+{
+    "status": "ok"
+}
+```
+
+### Possible Errors
+
+| Status                      | Description             |
+| --------------------------- | ----------------------- |
+| `500 Internal Server Error` | Service is not healthy. |
+
+```
+```
+
+
+### [1.2 Register User](#12-register-user)
 
 Creates a new user account.
 
@@ -59,7 +111,7 @@ curl --location 'http://localhost:8080/register' \
 
 ---
 
-### Login
+### [1.3 Login](#13-login)
 
 Authenticates an existing user and creates a new session.
 
@@ -113,7 +165,7 @@ Example:
 
 ---
 
-### Generate Access Token
+### [1.4 Generate Access Token](#14-generate-access-token)
 
 Generates a short-lived JWT access token for a specific protected service.
 
@@ -173,7 +225,7 @@ Example response:
 
 ---
 
-# Protected Service
+# [2. Protected Service](#2-protected-service)
 
 Base URL
 
@@ -183,7 +235,7 @@ http://localhost:8081
 
 ---
 
-### Get Orders
+### [2.1 Get Orders](#21-get-orders)
 
 Returns all orders belonging to the authenticated user.
 
