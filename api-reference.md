@@ -250,7 +250,7 @@ This endpoint does not require authentication and is intended for monitoring pur
 ### cURL Example
 
 ```bash
-curl --location 'http://localhost:8080/health'
+curl --location 'http://localhost:8081/health'
 ```
 
 ### Successful Response
