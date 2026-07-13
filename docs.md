@@ -142,7 +142,7 @@ The **Protected Service**, implemented in Go, validates JWT access tokens indepe
 
 All components are containerized using **Docker**, allowing each service and its dependencies to run in isolated environments while maintaining a reproducible deployment process. This approach reflects common practices used in distributed systems, where services can be developed, deployed and scaled independently.
 
-# 4.2 Go Backend Architecture
+## 4.2 Go Backend Architecture
 
 The backend services are implemented in Go following a layered architecture based on the **Repository Pattern**.
 
@@ -189,7 +189,7 @@ This approach provides several advantages:
 
 ---
 
-# 4.3 PostgreSQL Data Model and Design Choices
+## 4.3 PostgreSQL Data Model and Design Choices
 
 TODO: check and include useful indexes!
 
@@ -199,7 +199,7 @@ The relational model was chosen because authentication entities have well-define
 
 The main entities are:
 
-## Users
+### Users
 
 The `users` table stores identity information.
 
@@ -216,7 +216,7 @@ Passwords are never stored in plain text. Only the result of the hashing functio
 
 ---
 
-## Sessions
+### Sessions
 
 The session table stores persistent information about authenticated sessions.
 
@@ -236,7 +236,7 @@ PostgreSQL remains the system of record for sessions, while Redis is used as a p
 ---
 
 
-## Service Registry
+### Service Registry
 
 The service registry stores the list of services allowed to receive JWT access tokens.
 
@@ -250,7 +250,7 @@ The registry is intentionally simple and does not represent runtime service disc
 
 ---
 
-# 4.4 Redis Session Management and Cache Strategy
+## 4.4 Redis Session Management and Cache Strategy
 
 Redis is used as a high-performance cache layer for session retrieval.
 
@@ -258,7 +258,7 @@ Sessions are accessed frequently during authentication flows, especially when ex
 
 Redis is therefore used following a cache-aside strategy, while PostgreSQL remains the source of truth.
 
-## Session Key Design
+### Session Key Design
 
 Session entries are stored using a deterministic key format:
 
@@ -286,7 +286,7 @@ Keeping the cached object small reduces memory usage and improves lookup efficie
 
 ---
 
-## Session TTL Strategy
+### Session TTL Strategy
 
 Each Redis session key is created with a TTL matching the configured session lifetime.
 
@@ -307,7 +307,7 @@ The TTL represents the maximum lifetime of the authenticated session, while JWT 
 
 ---
 
-## Service Registry Cache
+### Service Registry Cache
 
 Service registry information is also suitable for caching because it changes infrequently compared to how often it is read.
 
