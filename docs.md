@@ -99,7 +99,7 @@ Represents an authenticated user session created after a successful login.
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`                 | Unique session identifier.                                                                                                                           |
 | `user_id`            | Reference to the authenticated user.                                                                                                                 |
-| `session_token_hash` | Hash of the session token presented by the client. Storing only the hash prevents session tokens from being exposed in the event of a database leak. |
+| `session_token_hash` | Hash of the session token presented by the client. |
 | `created_at`         | Timestamp when the session was created.                                                                                                              |
 | `expires_at`         | Session expiration timestamp. Once expired, the session can no longer be used to obtain new access tokens.                                           |
 | `revoked_at`         | Optional timestamp indicating that the session has been explicitly revoked before its natural expiration.                                            |
