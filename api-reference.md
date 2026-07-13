@@ -9,6 +9,7 @@
 
 * [2. Protected Service](#2-protected-service)
 
+  * [2.1 Health Check](#21-health-check)
   * [2.1 Get Orders](#21-get-orders)
 
 
@@ -232,6 +233,45 @@ Base URL
 ```text
 http://localhost:8081
 ```
+
+
+## [2.1 Health Check](#21-health-check)
+
+Returns the current status of the service.
+
+This endpoint does not require authentication and is intended for monitoring purposes, container health checks and service availability verification.
+
+| Property       | Value        |
+| -------------- | ------------ |
+| Method         | `GET`        |
+| Endpoint       | `/health`    |
+| Authentication | Not required |
+
+### cURL Example
+
+```bash
+curl --location 'http://localhost:8080/health'
+```
+
+### Successful Response
+
+**200 OK**
+
+```json
+{
+    "status": "ok"
+}
+```
+
+### Possible Errors
+
+| Status                      | Description             |
+| --------------------------- | ----------------------- |
+| `500 Internal Server Error` | Service is not healthy. |
+
+```
+```
+
 
 ---
 
