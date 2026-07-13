@@ -345,12 +345,20 @@ Because service registration changes are administrative operations rather than r
 TODO: explain in detail the steps involved in the auth service, describing impleemntation details such as db writes, consistency etc.
 
 ### 5.1 Register
+
+<img src="./images/register.png" alt="Register" style="height:500px;">
+
 ### 5.2 Log In
 TODO: explain the login flow and writes to postgres/redis, and also the fact that if postgres fails, the operation fails. 
 Postgres ACID transactions are exploited to keep consistency
 
+<img src="./images/login.png" alt="Log In" style="height:500px;">
+
 ### 5.3 Token
+<img src="./images/token.png" alt="Token" style="height:500px;">
+
 ### 5.4 Log Out
+<img src="./images/logout" alt="Log Out" style="height:500px;">
 
 ## 6. Security Considerations
 Show image of many nodes, with the private key only in the auth service.
