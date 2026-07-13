@@ -235,6 +235,7 @@ PostgreSQL remains the system of record for sessions, while Redis is used as a p
 
 ---
 
+
 ## Service Registry
 
 The service registry stores the list of services allowed to receive JWT access tokens.
@@ -334,12 +335,8 @@ This avoids repeated database lookups during token generation while keeping Post
 
 Because service registration changes are administrative operations rather than runtime events, cache invalidation can be handled explicitly when services are added, removed or disabled.
 
-## 5. Request Flows
-### 5.1 Registration
-### 5.2 Login
-### 5.3 Protected Request
 
-## 6. Security Considerations
+## 5. Security Considerations
 Show image of many nodes, with the private key only in the auth service.
 Hashed passwords
 Public keys in nodes
@@ -347,6 +344,6 @@ Hashed sessions
 HTTPS not enabled yet
 ...
 
-## 7. Scalability Considerations
+## 6. Scalability Considerations
 
-## 8. Possible Improvements
+## 7. Possible Improvements
