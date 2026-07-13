@@ -193,8 +193,10 @@ This approach provides several advantages:
 
 ## 4.3 PostgreSQL Data Model and Design Choices
 
-TODO: check and include useful indexes!
-
+TODO: 
+ - check and include useful indexes!
+ - justify its usage very carefully: we want acid properties for such a critical point. We want CAP consistency. In future implementations with roles, relations are useful and relational consistency in this sense is important.
+   
 PostgreSQL is used as the authoritative datastore for authentication data.
 
 The relational model was chosen because authentication entities have well-defined relationships and require strong consistency guarantees. Database constraints are used to prevent invalid states and preserve data integrity.
