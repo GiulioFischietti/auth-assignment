@@ -137,6 +137,198 @@ The **Protected Service**, implemented in Go, validates JWT access tokens indepe
 
 All components are containerized using **Docker**, allowing each service and its dependencies to run in isolated environments while maintaining a reproducible deployment process. This approach reflects common practices used in distributed systems, where services can be developed, deployed and scaled independently.
 
+# 4.2 Go Backend Architecture
+
+The backend services are implemented in Go following a layered architecture based on the **Repository Pattern**.
+
+The main goal of this design is to separate business logic from data access concerns, allowing each layer to have a clear responsibility and making the system easier to maintain and test.
+
+The implemented structure can be summarized as follows:
+
+```text
+HTTP Request
+      |
+      v
++-------------+
+|  Handlers   |
++-------------+
+      |
+      v
++-------------+
+|  Services   |
++-------------+
+      |
+      v
++-------------+
+| Repository  |
++-------------+
+      |
+      v
++-------------+
+| Persistence |
++-------------+
+```
+
+The **handler layer** is responsible for HTTP concerns, including request parsing, input validation and response generation. It does not directly interact with databases or external systems.
+
+The **service layer** contains the application logic. It coordinates operations such as user registration, authentication, session creation and JWT generation, without being coupled to a specific persistence implementation.
+
+The **repository layer** abstracts all interactions with external storage systems. Repositories expose domain-oriented operations instead of database-specific queries, allowing the underlying storage technology to be replaced or mocked during testing.
+
+This approach provides several advantages:
+
+* clear separation of responsibilities;
+* improved testability through dependency injection and repository mocking;
+* reduced coupling between business logic and infrastructure components;
+* easier evolution of the system as new storage requirements are introduced.
+
+---
+
+# 4.3 PostgreSQL Data Model and Design Choices
+
+note: check and include useful indexes!
+
+PostgreSQL is used as the authoritative datastore for authentication data.
+
+The relational model was chosen because authentication entities have well-defined relationships and require strong consistency guarantees. Database constraints are used to prevent invalid states and preserve data integrity.
+
+The main entities are:
+
+## Users
+
+The `users` table stores identity information.
+
+| Column          | Description                                   |
+| --------------- | --------------------------------------------- |
+| `id`            | Primary key identifying the user.             |
+| `username`      | Unique identifier used during authentication. |
+| `password_hash` | Securely hashed password using bcrypt.        |
+| `created_at`    | Account creation timestamp.                   |
+
+The username field is protected by a unique constraint to prevent multiple accounts with the same identity.
+
+Passwords are never stored in plain text. Only the result of the hashing function is persisted, ensuring that database exposure does not directly reveal user credentials.
+
+---
+
+## Sessions
+
+The session table stores persistent information about authenticated sessions.
+
+| Column               | Description                                              |
+| -------------------- | -------------------------------------------------------- |
+| `id`                 | Primary key of the session record.                       |
+| `user_id`            | Foreign key referencing the authenticated user.          |
+| `session_token_hash` | Hash of the session token stored for security reasons.   |
+| `created_at`         | Session creation timestamp.                              |
+| `expires_at`         | Session expiration timestamp.                            |
+| `revoked_at`         | Optional timestamp used for explicit session revocation. |
+
+The relationship between users and sessions is modeled through a foreign key constraint, ensuring that sessions cannot exist without a valid user.
+
+PostgreSQL remains the system of record for sessions, while Redis is used as a performance optimization layer.
+
+---
+
+## Service Registry
+
+The service registry stores the list of services allowed to receive JWT access tokens.
+
+| Column         | Description                                              |
+| -------------- | -------------------------------------------------------- |
+| `id`           | Primary key.                                             |
+| `service_name` | Unique service identifier used as JWT audience.          |
+| `active`       | Indicates whether token generation is currently allowed. |
+
+The registry is intentionally simple and does not represent runtime service discovery. The purpose of this table is authorization control: the Authentication Service only issues tokens for registered and active services.
+
+---
+
+# 4.4 Redis Session Management and Cache Strategy
+
+Redis is used as a high-performance cache layer for session retrieval.
+
+Sessions are accessed frequently during authentication flows, especially when exchanging a session token for a JWT access token. Performing every lookup directly against PostgreSQL would introduce unnecessary database load and latency.
+
+Redis is therefore used following a cache-aside strategy, while PostgreSQL remains the source of truth.
+
+## Session Key Design
+
+Session entries are stored using a deterministic key format:
+
+```text
+session:<session_token_hash>
+```
+
+The session token hash is used instead of the raw token to avoid storing sensitive authentication material directly.
+
+Example:
+
+```text
+session:a8f91c2d7e4b...
+```
+
+The associated value contains the minimum required information to restore the authenticated context:
+
+```json
+{
+    "user_id": 123
+}
+```
+
+Keeping the cached object small reduces memory usage and improves lookup efficiency.
+
+---
+
+## Session TTL Strategy
+
+Each Redis session key is created with a TTL matching the configured session lifetime.
+
+Example:
+
+```text
+SET session:<token> <data> EX 86400
+```
+
+Using Redis native expiration provides several benefits:
+
+* automatic removal of expired sessions;
+* no background cleanup process required;
+* reduced application complexity;
+* predictable memory usage.
+
+The TTL represents the maximum lifetime of the authenticated session, while JWT access tokens have a shorter lifetime. This separation allows short-lived stateless access tokens while maintaining a longer authenticated session.
+
+---
+
+## Service Registry Cache
+
+Service registry information is also suitable for caching because it changes infrequently compared to how often it is read.
+
+A possible Redis representation is:
+
+```text
+service:<service_name>
+```
+
+Example:
+
+```text
+service:orders-service
+```
+
+The cached value can contain the current authorization status:
+
+```json
+{
+    "active": true
+}
+```
+
+This avoids repeated database lookups during token generation while keeping PostgreSQL as the authoritative source.
+
+Because service registration changes are administrative operations rather than runtime events, cache invalidation can be handled explicitly when services are added, removed or disabled.
+
 ## 6. DB Architecture
 ### 6.1 PostgreSQL
 ### 6.2 Redis
