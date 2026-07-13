@@ -358,7 +358,7 @@ Postgres ACID transactions are exploited to keep consistency
 <img src="./images/token.png" alt="Token">
 
 ### 5.4 Log Out
-<img src="./images/logout" alt="Log Out">
+<img src="./images/logout.png" alt="Log Out">
 
 ## 6. Security Considerations
 Show image of many nodes, with the private key only in the auth service.
