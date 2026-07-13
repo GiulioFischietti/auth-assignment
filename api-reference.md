@@ -46,7 +46,7 @@ curl --location 'http://localhost:8080/register' \
 
 ```json
 {
-    "message": "user registered successfully"
+    "message": "user created"
 }
 ```
 
@@ -158,7 +158,7 @@ Example response:
 
 ```json
 {
-    "access-token": "<jwt-access-token>"
+    "access_token": "<jwt-access-token>"
 }
 ```
 
