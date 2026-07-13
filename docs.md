@@ -120,6 +120,22 @@ The service registry is intentionally simple and static. Its purpose is to preve
 
 The `active` flag represents an authorization rule rather than the runtime health of a service. Whether a service is online or offline is outside the responsibility of the Authentication Service and is therefore not tracked. More advanced service discovery or health monitoring mechanisms were intentionally omitted to keep the project focused on authentication and authorization requirements.
 
+## 4. Implementation
+### 4.1 Implementation Overview
+
+The system is implemented as a set of independent backend services following a microservice-oriented architecture.
+
+<img src="./images/architecture(1).png" alt="Architecture" style="height:500px;">
+
+The backend services are developed using **Go**, selected for its suitability in building lightweight and highly concurrent network applications. Go provides a simple programming model, efficient resource usage and native support for concurrent workloads through goroutines, making it a good fit for authentication services and containerized environments.
+
+The **Authentication Service** is responsible for user management, authentication flows, session handling and JWT access token generation. It uses **PostgreSQL** as the primary persistent datastore for authentication-related information. A relational database was chosen because identity data requires strong consistency guarantees, structured relationships and reliable transactional operations. PostgreSQL represents the system of record for users and service authorization data.
+
+**Redis** is used as a complementary in-memory datastore for session management. Sessions are temporary entities with frequent read operations and a clearly defined expiration lifecycle, making Redis a suitable choice due to its low latency and native TTL capabilities. Redis acts as a cache layer rather than the authoritative datastore, reducing database load while maintaining PostgreSQL as the source of truth.
+
+The **Protected Service**, implemented in Go, validates JWT access tokens independently and exposes protected business resources. This service uses **MongoDB** as its persistence layer for order data. MongoDB was selected because order information naturally fits a document-oriented model, allowing related data such as customer snapshots and order details to be stored together. In this implementation MongoDB is used mainly as a mock business datastore to demonstrate the interaction between authentication and protected resources, rather than representing a complex domain persistence layer.
+
+All components are containerized using **Docker**, allowing each service and its dependencies to run in isolated environments while maintaining a reproducible deployment process. This approach reflects common practices used in distributed systems, where services can be developed, deployed and scaled independently.
 
 ## 6. DB Architecture
 ### 6.1 PostgreSQL
