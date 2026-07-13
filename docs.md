@@ -18,6 +18,9 @@ The system follows a microservice-oriented architecture where authentication res
 
 
 ## 2. Authentication
+
+TODO: mettere immagine/i per i flussi di login/token/request
+
 Authentication takes place in the auth service. After the users succesfully register and log in, they can ask for access to a specific protected service. They will be granted access to such protected service through temporary credentials.
 Such credentials will be verified by the protected service without managing user credentials (such as usernames and passwords), which is responsibility of the auth-service.
 
