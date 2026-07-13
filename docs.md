@@ -3,18 +3,16 @@ In this document it is shown the main design architectural choices for this home
 
 ## 1. Overview
 
-TODO: generalize this
-
 The objective of this assignment is to design and implement an auth service that returns temporary credentials to access protected services.
 
-This project implements a distributed authentication system composed of two independent backend services:
-* **Auth Service**: responsible for user identity management, authentication, session handling and JWT token generation, necessary to access the protected service.
-* **Protected Service**: exposes a protected business resource and validates authentication tokens before granting access, without directly managing user credentials.
+This project implements a distributed authentication system composed of two independent services:
+* **Auth Service**: responsible for user identity management, authentication and temporary credential generation, necessary to access the protected service.
+* **Protected Service**: exposes a protected business resource and validates temporary credentials before granting access, without directly managing user credentials.
 
 <img src="./images/architecture.png" alt="Architecture" style="height:500px;">
 
 
-The system follows a microservice-oriented architecture where authentication responsibilities are centralized in the Auth Service, while protected services remain independent and stateless. JWT tokens are signed using asymmetric cryptography (RSA), allowing downstream services to validate requests without requiring direct communication with the authentication service.
+The system follows a microservice-oriented architecture where authentication responsibilities are centralized in the Auth Service, while protected services remain independent and stateless: the protected service can independently validate user credentials without reaching the auth service again.
 
 
 ## 2. Authentication
