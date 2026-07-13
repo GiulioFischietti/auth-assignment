@@ -93,12 +93,14 @@ curl --location 'http://localhost:8080/login' \
 
 **200 OK**
 
-The generated session token is returned in the `Authorization` response header.
+The generated session token is returned in the response body.
 
 Example:
 
-```http
-Authorization: <session-token>
+```json
+{
+    "session_token": "<session-token>"
+}
 ```
 
 #### Possible Errors
@@ -150,12 +152,14 @@ curl --location 'http://localhost:8080/token' \
 
 **200 OK**
 
-The generated JWT access token is returned in the `Authorization` response header.
+The generated JWT access token is returned in the response body as `access-token`.
 
-Example:
+Example response:
 
-```http
-Authorization: <jwt-access-token>
+```json
+{
+    "access-token": "<jwt-access-token>"
+}
 ```
 
 #### Possible Errors
