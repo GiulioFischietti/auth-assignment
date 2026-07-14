@@ -9,8 +9,6 @@ Check the docs in this repo for design and api reference details
 * [API reference](api-reference.md)
 
 
-`api-reference.md`
-
 ## Quick Setup
 
 Requirements:  Windows WSL or linux system.
