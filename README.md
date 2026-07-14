@@ -1,6 +1,16 @@
 # Auth Assignment
 Short assignment on authentication.
 
+## Docs
+
+Check the docs in this repo for design and implementation details
+
+`docs.md`
+
+Check the API documentation and replicate the use cases with 
+
+`api-reference.md`
+
 ## Quick Setup
 
 1. Clone this repository 
@@ -44,12 +54,3 @@ If for any reason it fails, follow the steps below: you will execute the bash co
 
 Database seed is performed automatically at docker compose startup.
 
-## Docs
-
-Check the docs in this repo for design and implementation details
-
-`docs.md`
-
-Check the API documentation and replicate the use cases with 
-
-`api-reference.md`
