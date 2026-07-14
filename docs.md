@@ -136,6 +136,8 @@ Represents an authenticated user session created after a successful login.
 
 ---
 
+Note: in this work the User reference is not used in any way, but for future improvements and extensions it could be very useful, such as adding device_id or extending the whole auth system by managing roles, permissions etc...
+
 ### Service Registry
 
 Defines the services that are authorized to receive JWT access tokens from the Authentication Service.
