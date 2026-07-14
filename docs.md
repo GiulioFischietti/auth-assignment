@@ -20,6 +20,7 @@ In this document it is shown the main design architectural choices for this home
   * [5.4 Log Out](#54-logout)
 * [6. Security Considerations](#6-security-considerations)
 * [7. Current Limitations](#7-current-limitations)
+* [8. Scaling up](#8-scaling-up)
  
 ## [1. Overview](1-overview)
 
@@ -516,6 +517,6 @@ Communication currently occurs over HTTP to simplify local development.
 
 In a production deployment, HTTPS/TLS should be mandatory for both client-to-service and inter-service communication in order to protect credentials and authentication tokens during transmission.
 
-## [8. Scaling]
+## [8. Scaling up](#8-scaling-up)
 
 The architecture proposed could potentially have already good performance when the number of active users - who ask for new access tokens every 5 minutes - is moderate. However, with a large increase in  active users, it would be necessary to scale up the system, introducing multiple auth instances to distribute the load, and shard Redis accordingly.
