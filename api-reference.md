@@ -186,7 +186,7 @@ Authorization: <session-token>
 
 ```json
 {
-    "service": "orders-service"
+    "service_name": "orders-service"
 }
 ```
 
