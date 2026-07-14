@@ -194,16 +194,16 @@ This approach provides several advantages:
 ---
 
 ## 4.3 PostgreSQL Data Model and Design Choices
+  
+PostgreSQL is used as the authoritative datastore for authentication data. Since the Authentication Service is responsible for issuing credentials that grant access to protected resources, correctness and consistency take priority over raw scalability. For this reason, a relational database with strong ACID guarantees represents a suitable choice.
 
-TODO: 
- - check and include useful indexes!
- - justify its usage very carefully: we want acid properties for such a critical point. We want CAP consistency. In future implementations with roles, relations are useful and referencial consistency in this sense is important (ghost roles are not good in such a critical scope). What if the user updates its role? We should manage it manually in mongo, but not here in postgres.
-   
-PostgreSQL is used as the authoritative datastore for authentication data.
+Authentication data naturally forms a relational domain: users own sessions, services are registered and authorized, and future extensions may introduce concepts such as roles, permissions or groups. PostgreSQL provides native mechanisms such as foreign keys, unique constraints and transactional guarantees to enforce these relationships directly at the database level, reducing the amount of consistency logic required in the application.
 
-The relational model was chosen because authentication entities have well-defined relationships and require strong consistency guarantees. Database constraints are used to prevent invalid states and preserve data integrity.
+By contrast, while NoSQL databases such as MongoDB excel at horizontal scalability and flexible schemas, maintaining complex relationships often relies more heavily on application logic. As the domain evolves, ensuring referential integrity and coordinating related updates becomes the responsibility of the backend rather than the database itself.
 
-The main entities are:
+The relational model therefore provides a more robust foundation for authentication and authorization data, where preserving integrity is generally more important than maximizing write scalability. NoSQL databases remain an excellent choice for other domains—such as document-oriented business data—where schema flexibility and horizontal scaling are the primary concerns rather than strict relational consistency.
+
+Below are shown the main entities modeled in Postgres.
 
 ### Users
 
