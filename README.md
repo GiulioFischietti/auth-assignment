@@ -9,7 +9,7 @@ Short assignment on authentication.
 
 3. In protected-service rename `.env.example` to `.env` (don't change it, it is already setup)
 
-4. Move in the root folder of the project and Execute the bash script (from wsl linux shell if you're on Windows)  
+4. Move in the root folder, and **from that exact location** execute the bash script (from wsl linux shell if you're on Windows)  
 
 `./scripts/start.sh`
 
