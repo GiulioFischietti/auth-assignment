@@ -141,7 +141,7 @@ The **Authentication Service** is responsible for user management, authenticatio
 
 **Redis** is used as a complementary in-memory datastore for session management. Sessions are temporary entities with frequent read operations and a clearly defined expiration lifecycle, making Redis a suitable choice due to its low latency and native TTL capabilities. Redis acts as a cache layer rather than the authoritative datastore, reducing database load while maintaining PostgreSQL as the source of truth.
 
-**Postgres** and **Redis** combined allow us to setup an architecture that guarantees consistent writes (Postgres ACID transactions) and fast reads (Redis in-memory db).
+**Postgres** and **Redis** combined allow us to setup an architecture that guarantees consistent (less frequent) writes (Postgres ACID transactions) and fast, more frequent reads (Redis in-memory db).
 
 The **Protected Service**, implemented in Go, validates JWT access tokens independently and exposes protected business resources. This service uses **MongoDB** as its persistence layer for order data. MongoDB was selected because order information naturally fits a document-oriented model, allowing related data such as customer snapshots and order details to be stored together. In this implementation MongoDB is used mainly as a mock business datastore to demonstrate the interaction between authentication and protected resources, rather than representing a complex domain persistence layer.
 
