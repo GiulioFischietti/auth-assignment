@@ -472,7 +472,7 @@ Without transport encryption, authentication credentials, session tokens and JWT
 The current implementation intentionally focuses on demonstrating a complete authentication workflow while keeping the overall architecture simple. As a result, several limitations remain that would need to be addressed in a production-grade system.
 
 ## Session Delete Policy
-In the current state, sessions are stored in the relational database indefenitely, making the session table grow very rapidly. 
+In this work, sessions are stored in the relational database indefenitely, making the session table grow very rapidly. 
 Since no specific use of old sessions has been defined, a delete policy could be considerated, for example running a cron job that deletes sessions older than 30 days, for example, or moving such sessions into another table used as archive.
 
 ## JWT Revocation Delay
