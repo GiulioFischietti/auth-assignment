@@ -6,6 +6,7 @@
   * [1.2 Register User](#12-register-user)
   * [1.3 Login](#13-login)
   * [1.4 Generate Access Token](#14-generate-access-token)
+  * [1.5 Log Out](#15-log-out)
 
 * [2. Protected Service](#2-protected-service)
 
@@ -225,6 +226,51 @@ Example response:
 | `500 Internal Server Error` | Unexpected server error.                         |
 
 ---
+### [1.5 Log Out](15-log-out)
+
+Invalidates the current authenticated session.
+
+The client must provide the session token in the `Authorization` header. If the session exists and is still valid, it is revoked and can no longer be used to generate new JWT access tokens.
+
+Already issued JWT access tokens remain valid until their expiration time.
+
+| Property       | Value                                  |
+| -------------- | -------------------------------------- |
+| Method         | `POST`                                 |
+| Endpoint       | `/logout`                              |
+| Authentication | Session Token (`Authorization` header) |
+
+### Request Headers
+
+| Header          | Value             |
+| --------------- | ----------------- |
+| `Authorization` | `<session_token>` |
+
+### cURL Example
+
+```bash
+curl --location --request POST 'http://localhost:8080/logout' \
+--header 'Authorization: <session_token>'
+```
+
+### Successful Response
+
+**200 OK**
+
+```json
+{
+    "message": "Logout completed successfully."
+}
+```
+
+### Possible Errors
+
+| Status                      | Description                                |
+| --------------------------- | ------------------------------------------ |
+| `400 Bad Request`           | Missing or malformed request.              |
+| `401 Unauthorized`          | Invalid, expired or revoked session token. |
+| `500 Internal Server Error` | Unexpected server error.                   |
+
 
 # [2. Protected Service](#2-protected-service)
 
