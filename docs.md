@@ -286,6 +286,23 @@ The registry is intentionally simple and does not represent runtime service disc
 
 ---
 
+### Indexes
+
+Indexes are used to optimize the most frequent lookup operations performed by the Authentication Service. Since most queries are based on exact matching conditions (for example, searching a user by username or retrieving a session by its token hash), PostgreSQL B-indexes are used.
+
+The following indexes are defined:
+
+| Table              | Column               |  Purpose                                                                                                                 |
+| ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `users`            | `username`           | Usernames are unique: this index provides efficient user lookup during log in.                           |
+| `sessions`         | `session_token_hash` | Allows efficient session retrieval, useful whenever a user asks for a new access token and its session token must be validated.  |
+| `service_registry` | `service_name`       | Allows fast service lookup during access token JWT audience validation and prevents duplicate service registrations.                  |
+
+PostgreSQL automatically creates a unique B-tree index for columns defined with a `UNIQUE` constraint. This is particularly useful for authentication data, where most queries are equality-based lookups rather than range queries.
+
+The `session_token_hash` index is especially important because session validation requires retrieving a session using a deterministic hash value generated from the client-provided session token. Storing and indexing the hash instead of the raw token improves security while maintaining efficient lookup performance.
+
+
 ### [4.4 Redis](44-redis)
 
 Redis is used as a high-performance cache layer for session retrieval.
