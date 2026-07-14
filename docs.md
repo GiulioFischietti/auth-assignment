@@ -519,4 +519,8 @@ In a production deployment, HTTPS/TLS should be mandatory for both client-to-ser
 
 ## [8. Scaling up](#8-scaling-up)
 
-The architecture proposed could potentially have already good performance when the number of active users - who ask for new access tokens every 5 minutes - is moderate. However, with a large increase in  active users, it would be necessary to scale up the system, introducing multiple auth instances to distribute the load, and shard Redis accordingly.
+The proposed architecture can provide good performance when the number of active users—who request a new access token approximately every five minutes—is moderate. As the number of active users grows, the authentication service can be horizontally scaled by deploying multiple stateless instances behind a load balancer.
+
+During a token refresh operation, the client sends its session token to the authentication service, which validates it by querying Redis. In the common case, the session information is retrieved directly from Redis, avoiding access to PostgreSQL and significantly reducing latency.
+
+Initially, all authentication service instances can share the same Redis deployment. If Redis itself becomes a bottleneck due to increasing request throughput or memory consumption, it can be horizontally scaled by deploying a Redis Cluster. In this case, sharding the data based on the session token hash evenly distributes both the storage requirements and the request load across the cluster nodes, making it a suitable strategy for scaling the cache layer.
