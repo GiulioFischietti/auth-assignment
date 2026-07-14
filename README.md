@@ -1,8 +1,6 @@
 # Auth Assignment
 Short assignment on authentication.
 
-A detailed doc regarding showing design choices will be uploaded in a .pdf file soon.
-
 ## Quick Setup
 
 1. Clone this repository 
