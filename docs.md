@@ -516,4 +516,6 @@ Communication currently occurs over HTTP to simplify local development.
 
 In a production deployment, HTTPS/TLS should be mandatory for both client-to-service and inter-service communication in order to protect credentials and authentication tokens during transmission.
 
+## [8. Scaling]
 
+The architecture proposed could potentially have already good performance when the number of active users - who ask for new access tokens every 5 minutes - is moderate. However, with a large increase in  active users, it would be necessary to scale up the system, introducing multiple auth instances to distribute the load, and shard Redis accordingly.
