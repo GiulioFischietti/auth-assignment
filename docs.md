@@ -380,13 +380,11 @@ When logging out the field revoked_at in session table in postgres is updated an
 
 ## [6. Security Considerations](6-security-considerations)
 
-Security has been a primary design objective throughout the implementation of the authentication platform. The following measures have been adopted to protect user credentials, authentication sessions and access tokens while keeping the architecture suitable for a distributed microservice environment.
+Security has been one of the primary design objectives, even though the time constraints, throughout the implementation of the authentication platform. The following measures have been adopted to protect user credentials, authentication sessions and access tokens while keeping the architecture suitable for a distributed microservice environment.
 
 ### Password Hashing
 
-User passwords are never stored in plain text. During registration, each password is hashed using **bcrypt** before being persisted in PostgreSQL.
-
-Bcrypt is specifically designed for password storage, incorporating a configurable work factor that makes brute-force attacks significantly more expensive. In the event of a database compromise, attackers would only obtain password hashes rather than the original credentials.
+User passwords are never stored in plain text. During registration, each password is hashed using **bcrypt** before being persisted in User table in PostgreSQL db.
 
 
 ### Hashed Session Tokens
@@ -409,7 +407,8 @@ The private signing key remains exclusively within the Authentication Service, w
 This architecture provides two important advantages:
 
 * protected services are able to validate JWTs locally without contacting the Authentication Service;
-* protected services cannot forge or issue new access tokens because they never possess the private signing key.
+* protected services cannot issue new access tokens because they never possess the private signing key;
+* protected services do not manage user credentials.
 
 Using asymmetric cryptography therefore improves both scalability and security in comparison with symmetric signing algorithms, where the same secret key would need to be shared across multiple services.
 
@@ -420,7 +419,7 @@ JWT access tokens are intentionally configured with a short lifetime (5 minutes)
 
 Once issued, a JWT remains valid until its expiration time, even if the corresponding session is revoked shortly afterwards. This is an inherent characteristic of stateless JWT authentication.
 
-Limiting the token lifetime significantly reduces this exposure window while allowing protected services to validate requests independently, without introducing synchronous communication with the Authentication Service.
+Limiting the token lifetime significantly reduces this exposure window while allowing protected services to validate requests independently, without introducing synchronous communication with the Authentication Service and without storing JWT tokens in the database as it's been done with the session tokens.
 
 
 ### Standard JWT Claims
@@ -515,11 +514,4 @@ Communication currently occurs over HTTP to simplify local development.
 
 In a production deployment, HTTPS/TLS should be mandatory for both client-to-service and inter-service communication in order to protect credentials and authentication tokens during transmission.
 
-### Scalability Boundaries
-
-The current architecture is designed to scale horizontally through stateless services and Redis caching.
-
-However, it has not been optimized for very large-scale deployments involving millions of concurrent users.
-
-Additional mechanisms such as Redis Cluster, PostgreSQL replication, distributed caching strategies and orchestration platforms would be required to support significantly higher workloads.
 
