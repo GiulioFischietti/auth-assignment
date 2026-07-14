@@ -134,7 +134,8 @@ The system is implemented as a set of independent backend services following a m
 
 <img src="./images/architecture(1).png" alt="Architecture" style="height:500px;">
 
-The backend services are developed using **Go**, selected for its suitability in building lightweight and highly concurrent network applications. Go provides a simple programming model, efficient resource usage and native support for concurrent workloads through goroutines, making it a good fit for authentication services and containerized environments.
+The backend services are developed using **Go**, selected for its suitability in building lightweight and small rest APIs. 
+Go provides a simple programming model, efficient resource usage  making it a good fit for authentication services and containerized environments.
 
 The **Authentication Service** is responsible for user management, authentication flows, session handling and JWT access token generation. It uses **PostgreSQL** as the primary persistent datastore for authentication-related information. A relational database was chosen because identity data requires strong consistency guarantees, structured relationships and reliable transactional operations. PostgreSQL represents the system of record for users and service authorization data.
 
@@ -147,6 +148,9 @@ The **Protected Service**, implemented in Go, validates JWT access tokens indepe
 All components are containerized using **Docker**, allowing each service and its dependencies to run in isolated environments while maintaining a reproducible deployment process. This approach reflects common practices used in distributed systems, where services can be developed, deployed and scaled independently.
 
 ## 4.2 Go Backend Architecture
+From a software engineering perspective, Go encourages a simple and explicit programming model. The language favors composition over inheritance, has a relatively small standard library with extensive networking support, and integrates naturally with dependency injection through interfaces. These characteristics contribute to codebases that are easier to maintain, test and evolve.
+
+The backend follows a layered architecture based on the Repository Pattern, separating HTTP handling, business logic and persistence concerns into distinct layers. This separation promotes loose coupling between components, improves unit testability through interface-based mocking, and allows infrastructure details—such as PostgreSQL, Redis or future storage technologies—to evolve independently from the business logic.
 
 The backend services are implemented in Go following a layered architecture based on the **Repository Pattern**.
 
