@@ -45,3 +45,13 @@ If for any reason it fails (for example due to windows CRLF in .sh), follow the 
 ## Database seed
 
 Database seed is performed automatically at docker compose startup.
+
+## Docs
+
+Check the docs in this repo for design and implementation details
+
+`docs.md`
+
+Check the API documentation and replicate the use cases with 
+
+`api-reference.md`
