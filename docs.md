@@ -132,7 +132,7 @@ The `active` flag represents an authorization rule rather than the runtime healt
 
 The system is implemented as a set of independent backend services following a microservice-oriented architecture.
 
-<img src="./images/architecture(1).png" alt="Architecture" style="height:500px;">
+<img src="./images/architecture(1).png" alt="Architecture">
 
 The backend services are developed using **Go**, selected for its suitability in building lightweight and small rest APIs. 
 Go provides a simple programming model, efficient resource usage  making it a good fit for authentication services and containerized environments.
