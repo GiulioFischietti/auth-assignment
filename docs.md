@@ -51,7 +51,7 @@ The JWT tokens for this project are stateless, so no info about them is stored a
 ### [2.1 Session Tokens](21-session-tokens)
 As mentioned, session tokens are opaque tokens generated after the user succesful login. They are stored (hashed) in a database, along with id, user id and expiration time associated.
 
-<img src="./images/session-token.png" alt="Session Tokens">
+<img src="./images/session-token.png" alt="Session Token">
 
 Every time the user asks for a new access token, the auth services checks against the database whether the user session token is valid and not expired. If the session token is expired a 401 status code is sent back. This means that in a real application user should log in to get a new session token.
 
