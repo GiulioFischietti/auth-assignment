@@ -398,11 +398,6 @@ Session tokens are generated using a cryptographically secure random generator a
 
 Before being persisted, each session token is hashed using SHA-256. Consequently, both PostgreSQL and Redis contain only the hash of the token rather than the token itself.
 
-When a client presents a session token, the Authentication Service hashes the received value and performs the lookup using the resulting hash.
-
-This approach ensures that a database leak does not immediately expose valid session credentials, as attackers cannot directly reuse the stored hashes for authentication.
-
-
 ### RSA-Signed JWT Access Tokens
 
 JWT access tokens are signed using the RSA asymmetric algorithm (RS256).
