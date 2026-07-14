@@ -256,7 +256,7 @@ The registry is intentionally simple and does not represent runtime service disc
 
 ---
 
-## 4.4 Redis Session Management and Cache Strategy
+### 4.4 Redis Session Management and Cache Strategy
 
 Redis is used as a high-performance cache layer for session retrieval.
 
