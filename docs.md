@@ -269,7 +269,7 @@ Redis is therefore used following a cache-aside strategy, while PostgreSQL remai
 Session entries are stored using a deterministic key format:
 
 ```text
-session:<session_token_hash>
+session:<session_token_hash>=<user_id>
 ```
 
 The session token hash is used instead of the raw token to avoid storing sensitive authentication material directly.
@@ -277,15 +277,7 @@ The session token hash is used instead of the raw token to avoid storing sensiti
 Example:
 
 ```text
-session:a8f91c2d7e4b...
-```
-
-The associated value contains the minimum required information to restore the authenticated context:
-
-```json
-{
-    "user_id": 123
-}
+session:a8f91c2d7e4b... = 123
 ```
 
 Keeping the cached object small reduces memory usage and improves lookup efficiency.
@@ -317,24 +309,16 @@ The TTL represents the maximum lifetime of the authenticated session, while JWT 
 
 Service registry information is also suitable for caching because it changes infrequently compared to how often it is read.
 
-A possible Redis representation is:
+The chosen key format is the following:
 
 ```text
-service:<service_name>
+service:<service_name> = <active>
 ```
 
 Example:
 
 ```text
-service:orders-service
-```
-
-The cached value can contain the current authorization status:
-
-```json
-{
-    "active": true
-}
+service:orders-service = true
 ```
 
 This avoids repeated database lookups during token generation while keeping PostgreSQL as the authoritative source.
