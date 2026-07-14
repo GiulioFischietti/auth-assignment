@@ -3,11 +3,11 @@ Short assignment on authentication.
 
 ## Docs
 
-Check the docs in this repo for design and implementation details
+Check the docs in this repo for design and api reference details
 
-`docs.md`
+* [Docs](docs.md)
+* [API reference](api-reference.md)
 
-Check the API documentation and replicate the use cases with 
 
 `api-reference.md`
 
