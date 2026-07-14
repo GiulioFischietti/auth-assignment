@@ -360,8 +360,9 @@ If the insert in postgres fails, the whole operation rolls back, returning an er
 
 ### 5.3 Token
 In this request the user asks for an access token, which allows it to access a specific protected service.
-First, its session token must be validated: it is searched in redis db and if found, the auth service generates an access token which is returned to the user. If not found, such token is searched in Postgres Session table and if found, it is stored in redis and a new access token is sent to the user.
-Otherwise, an error is returned.
+First, its session token and service names must be validated: first, they are searched in the Redis database, if they're not available they are searched in the postgres db (service names are found in the service registry table, while session tokens in the session table) the auth service generates an access token which is returned to the user. 
+If any information was found in postgres but not in redis, it is also copied in redis cache while the access token is returned to the user, for faster reads in the future.
+If session token/service name is not valid, obviously, an error is returned.
 
 <img src="./images/token.png" alt="Token">
 
