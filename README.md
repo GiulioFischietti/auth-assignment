@@ -13,6 +13,8 @@ Check the docs in this repo for design and api reference details
 
 ## Quick Setup
 
+Requirements:  Windows WSL or linux system.
+
 1. Clone this repository 
 
 2. In auth-service rename `.env.example` to `.env` (don't change it, it is already setup)
