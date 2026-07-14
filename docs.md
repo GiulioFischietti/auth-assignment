@@ -355,13 +355,183 @@ When logging out the field revoked_at in session table in postgres is updated an
 <img src="./images/logout.png" alt="Log Out">
 
 ## 6. Security Considerations
-Show image of many nodes, with the private key only in the auth service.
-Hashed passwords
-Public keys in nodes
-Hashed sessions
-HTTPS not enabled yet
-...
 
-## 7. Scalability Considerations
+Security has been a primary design objective throughout the implementation of the authentication platform. The following measures have been adopted to protect user credentials, authentication sessions and access tokens while keeping the architecture suitable for a distributed microservice environment.
 
-## 8. Possible Improvements
+### Password Hashing
+
+User passwords are never stored in plain text. During registration, each password is hashed using **bcrypt** before being persisted in PostgreSQL.
+
+Bcrypt is specifically designed for password storage, incorporating a configurable work factor that makes brute-force attacks significantly more expensive. In the event of a database compromise, attackers would only obtain password hashes rather than the original credentials.
+
+---
+
+### Hashed Session Tokens
+
+Session tokens are generated using a cryptographically secure random generator and are never stored directly in persistent storage.
+
+Before being persisted, each session token is hashed using SHA-256. Consequently, both PostgreSQL and Redis contain only the hash of the token rather than the token itself.
+
+When a client presents a session token, the Authentication Service hashes the received value and performs the lookup using the resulting hash.
+
+This approach ensures that a database leak does not immediately expose valid session credentials, as attackers cannot directly reuse the stored hashes for authentication.
+
+---
+
+### RSA-Signed JWT Access Tokens
+
+JWT access tokens are signed using the RSA asymmetric algorithm (RS256).
+
+The private signing key remains exclusively within the Authentication Service, while only the corresponding public key is distributed to protected services for signature verification.
+
+This architecture provides two important advantages:
+
+* protected services are able to validate JWTs locally without contacting the Authentication Service;
+* protected services cannot forge or issue new access tokens because they never possess the private signing key.
+
+Using asymmetric cryptography therefore improves both scalability and security in comparison with symmetric signing algorithms, where the same secret key would need to be shared across multiple services.
+
+---
+
+### Short-Lived Access Tokens
+
+JWT access tokens are intentionally configured with a short lifetime (5 minutes).
+
+Once issued, a JWT remains valid until its expiration time, even if the corresponding session is revoked shortly afterwards. This is an inherent characteristic of stateless JWT authentication.
+
+Limiting the token lifetime significantly reduces this exposure window while allowing protected services to validate requests independently, without introducing synchronous communication with the Authentication Service.
+
+---
+
+### Standard JWT Claims
+
+Each generated JWT includes the standard registered claims defined by RFC 7519:
+
+* `iss` (Issuer) identifies the Authentication Service that issued the token.
+* `sub` (Subject) uniquely identifies the authenticated user.
+* `aud` (Audience) restricts the token to a specific protected service.
+* `iat` (Issued At) records the token creation time.
+* `exp` (Expiration Time) limits the token validity period.
+
+Protected services validate these claims before granting access to protected resources.
+
+---
+
+### Service Authorization
+
+The Authentication Service maintains a service registry containing the list of services authorized to receive JWT access tokens.
+
+Access tokens are generated only for registered and active services, preventing arbitrary audience values from being embedded into JWTs.
+
+This mechanism reduces the risk of token misuse across unauthorized services.
+
+---
+
+### Secure Key Management
+
+RSA key pairs are generated outside the application during deployment.
+
+The private key is accessible only by the Authentication Service, while the public key is distributed to protected services for verification purposes.
+
+Separating signing and verification keys minimizes the impact of a compromise affecting a protected service, as attackers would still be unable to generate valid JWTs.
+
+---
+
+### Transport Security
+
+The current implementation communicates over HTTP for simplicity and ease of local development.
+
+In a production environment, all communication between clients and services, as well as inter-service communication, should be protected using HTTPS/TLS.
+
+Without transport encryption, authentication credentials, session tokens and JWT access tokens could be intercepted by an attacker performing network-level attacks.
+
+---
+
+## 7. Current Limitations
+
+The current implementation intentionally focuses on demonstrating a complete authentication workflow while keeping the overall architecture simple. As a result, several limitations remain that would need to be addressed in a production-grade system.
+
+## JWT Revocation Delay
+
+JWT access tokens are stateless and are therefore not validated against the Authentication Service once issued.
+
+As a consequence, revoking or expiring a user session does not immediately invalidate already issued access tokens. A JWT remains valid until its expiration time.
+
+This limitation is partially mitigated by keeping the access token lifetime intentionally short (5 minutes), reducing the exposure window while preserving the scalability benefits of local JWT validation.
+
+---
+
+### No Automatic Service Registry Synchronization
+
+The service registry is stored in PostgreSQL and represents the list of services authorized to receive JWT access tokens.
+
+Any changes to the registry are performed manually. The current implementation does not include automatic synchronization, dynamic service discovery or integration with orchestration platforms.
+
+This simplification was considered acceptable for the scope of the project.
+
+---
+
+### No Refresh Token Mechanism
+
+Clients authenticate again whenever the session is used to obtain a new JWT access token.
+
+Although this keeps the authentication flow simple, production systems commonly introduce refresh tokens to improve user experience while maintaining short-lived access tokens.
+
+---
+
+### Limited Session Management
+
+The current implementation supports session expiration and revocation but does not provide advanced session management capabilities such as:
+
+* multiple concurrent session management;
+* device identification;
+* session history;
+* forced logout of specific devices;
+* user session inspection.
+
+These features could be added without requiring major architectural changes.
+
+---
+
+### Key Management
+
+RSA keys are generated locally and loaded from the filesystem.
+
+Although sufficient for development purposes, production deployments should store private keys inside a dedicated secret management solution such as HashiCorp Vault or a cloud-based Key Management Service (KMS).
+
+Key rotation is also not currently implemented.
+
+---
+
+### Transport Security
+
+Communication currently occurs over HTTP to simplify local development.
+
+In a production deployment, HTTPS/TLS should be mandatory for both client-to-service and inter-service communication in order to protect credentials and authentication tokens during transmission.
+
+---
+
+### Limited Monitoring and Observability
+
+The project currently provides only application logging.
+
+Production environments would typically include additional operational capabilities such as:
+
+* centralized log aggregation;
+* metrics collection;
+* distributed tracing;
+* health dashboards;
+* alerting systems.
+
+These features improve fault diagnosis and operational visibility but are outside the scope of this assignment.
+
+---
+
+### Scalability Boundaries
+
+The current architecture is designed to scale horizontally through stateless services and Redis caching.
+
+However, it has not been optimized for very large-scale deployments involving millions of concurrent users.
+
+Additional mechanisms such as Redis Cluster, PostgreSQL replication, distributed caching strategies and orchestration platforms would be required to support significantly higher workloads.
+
