@@ -555,7 +555,7 @@ In a production deployment, HTTPS/TLS should be mandatory for both client-to-ser
 
 The proposed architecture can provide good performance when the number of active users—who request a new access token approximately every five minutes—is moderate. As the number of active users grows, the authentication service can be horizontally scaled by deploying multiple stateless instances behind a load balancer.
 
-During a token refresh operation, the client sends its session token to the authentication service, which validates it by querying Redis. In the common case, the session information is retrieved directly from Redis, avoiding access to PostgreSQL and significantly reducing latency.
+During the create access token operation, the client sends its session token to the authentication service, which validates it by querying Redis. In the common case, the session information is retrieved directly from Redis, avoiding access to PostgreSQL and significantly reducing latency.
 
 Initially, all authentication service instances can share the same Redis and Postgres deployment:
 
