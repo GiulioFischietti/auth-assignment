@@ -523,4 +523,10 @@ The proposed architecture can provide good performance when the number of active
 
 During a token refresh operation, the client sends its session token to the authentication service, which validates it by querying Redis. In the common case, the session information is retrieved directly from Redis, avoiding access to PostgreSQL and significantly reducing latency.
 
-Initially, all authentication service instances can share the same Redis deployment. If Redis itself becomes a bottleneck due to increasing request throughput or memory consumption, it can be horizontally scaled by deploying a Redis Cluster. In this case, sharding the data based on the session token hash evenly distributes both the storage requirements and the request load across the cluster nodes, making it a suitable strategy for scaling the cache layer.
+Initially, all authentication service instances can share the same Redis deployment:
+
+<img src="./images/scale1.png" alt="Scaling up 1">
+
+If Redis itself becomes a bottleneck due to increasing request throughput or memory consumption, it can be horizontally scaled by deploying a Redis Cluster. In this case, sharding the data based on the session token hash evenly distributes both the storage requirements and the request load across the cluster nodes, making it a suitable strategy for scaling the cache layer.
+
+<img src="./images/scale2.png" alt="Scaling up 2">
