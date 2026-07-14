@@ -392,7 +392,7 @@ Security has been one of the primary design objectives, even though the time con
 User passwords are never stored in plain text. During registration, each password is hashed using **bcrypt** before being persisted in User table in PostgreSQL db.
 
 
-### Hashed Session Tokens
+### Session Tokens Hashing
 
 Session tokens are generated using a cryptographically secure random generator and are never stored directly in persistent storage.
 
