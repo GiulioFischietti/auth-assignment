@@ -367,7 +367,7 @@ If session token/service name is not valid, obviously, an error is returned.
 <img src="./images/token.png" alt="Token">
 
 ### 5.4 Log Out
-When logging out the field expires_at in session table in postgres is updated and the session token is removed from redis cache.
+When logging out the field revoked_at in session table in postgres is updated and the session token is removed from redis cache.
 <img src="./images/logout.png" alt="Log Out">
 
 ## 6. Security Considerations
