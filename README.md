@@ -51,3 +51,7 @@ Database seed is performed automatically at docker compose startup.
 Check the docs in this repo for design and implementation details
 
 `docs.md`
+
+Replicate the use cases with 
+
+`api-reference.md`
