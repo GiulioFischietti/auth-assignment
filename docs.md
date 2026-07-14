@@ -424,15 +424,9 @@ Limiting the token lifetime significantly reduces this exposure window while all
 
 ### Standard JWT Claims
 
-Each generated JWT includes the standard registered claims defined by RFC 7519:
+Each generated JWT includes the standard registered claims defined by RFC 7519.
 
-* `iss` (Issuer) identifies the Authentication Service that issued the token.
-* `sub` (Subject) uniquely identifies the authenticated user.
-* `aud` (Audience) restricts the token to a specific protected service.
-* `iat` (Issued At) records the token creation time.
-* `exp` (Expiration Time) limits the token validity period.
-
-Protected services validate these claims before granting access to protected resources.
+Protected services validate these claims before granting access to protected resources: any attempt by a hacker to change issuer/subject/expiry would make the validation fail.
 
 
 ### Service Authorization
