@@ -523,7 +523,7 @@ The proposed architecture can provide good performance when the number of active
 
 During a token refresh operation, the client sends its session token to the authentication service, which validates it by querying Redis. In the common case, the session information is retrieved directly from Redis, avoiding access to PostgreSQL and significantly reducing latency.
 
-Initially, all authentication service instances can share the same Redis deployment:
+Initially, all authentication service instances can share the same Redis and Postgres deployment:
 
 <img src="./images/scale1.png" alt="Scaling up 1">
 
