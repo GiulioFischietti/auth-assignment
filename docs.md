@@ -530,3 +530,11 @@ Initially, all authentication service instances can share the same Redis and Pos
 If Redis itself becomes a bottleneck due to increasing request throughput or memory consumption, it can be horizontally scaled by deploying a Redis Cluster. In this case, sharding the data based on the session token hash evenly distributes both the storage requirements and the request load across the cluster nodes, making it a suitable strategy for scaling the cache layer.
 
 <img src="./images/scale2.png" alt="Scaling up 2">
+
+Postgres would be left in one single instance for many reasons:
+1. The vast majority of queries would end up reading data from redis cache, only a small part would read on postgres, so adding more instances would have a small impact in performance terms;
+2. Sharding based on session tokens would impact transactional consistency: sessions would be distributed, but all other data (users data and services) would be replicated, and could lead to inconsistencies to manually handle.
+
+For this reason, the best solution for scaling up would be to increase the number of application instances, create a Redis cluster while keeping Postgres db in a single instance.
+
+This would guarantee what we wanted to achieve so far: consistent writes, fast reads.
