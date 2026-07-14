@@ -517,7 +517,7 @@ For simplicity, each service is directly exposed through its own HTTP port.
 
 This approach facilitates local development, testing and API inspection, allowing individual services to be accessed independently without introducing additional infrastructure components.
 
-In a production environment, however, exposing every service publicly is generally discouraged. A dedicated API Gateway or reverse proxy (such as NGINX)
+In a production environment, however, a dedicated API Gateway or reverse proxy such as NGINX should be integrated.
 ### Transport Security
 
 Communication currently occurs over HTTP to simplify local development.
