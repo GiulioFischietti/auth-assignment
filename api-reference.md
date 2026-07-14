@@ -198,7 +198,7 @@ curl --location 'http://localhost:8080/token' \
 --header 'Authorization: <session-token>' \
 --header 'Content-Type: application/json' \
 --data '{
-    "service": "orders-service"
+    "service_name": "orders-service"
 }'
 ```
 
