@@ -531,9 +531,11 @@ If Redis itself becomes a bottleneck due to increasing request throughput or mem
 
 <img src="./images/scale2.png" alt="Scaling up 2">
 
-Postgres would be left in one single instance for many reasons:
-1. The vast majority of queries would end up reading data from redis cache, only a small part would read on postgres, so adding more instances would have a small impact in performance terms;
-2. Sharding based on session tokens would impact transactional consistency: sessions would be distributed, but all other data (users data and services) would be replicated, and could lead to inconsistencies to manually handle.
+The relational database is intentionally designed around a single PostgreSQL primary instance.
+
+The majority of authentication requests are expected to be served directly from Redis, with PostgreSQL being accessed only during session creation, cache misses or administrative operations. As a result, introducing multiple database instances would provide limited performance improvements while significantly increasing architectural complexity.
+
+Sharding the authentication database would also offer little benefit. Authentication data forms a strongly consistent domain where users, sessions and service registrations are closely related. Distributing this data across multiple shards would complicate transactional operations and consistency management without substantially reducing the load on the primary database.
 
 For this reason, the best solution for scaling up would be to increase the number of application instances, create a Redis cluster while keeping Postgres db in a single instance.
 
