@@ -471,17 +471,21 @@ Without transport encryption, authentication credentials, session tokens and JWT
 
 The current implementation intentionally focuses on demonstrating a complete authentication workflow while keeping the overall architecture simple. As a result, several limitations remain that would need to be addressed in a production-grade system.
 
-## Session Delete Policy
+### Session Delete Policy
 In this work, sessions are stored in the relational database indefinetely, making the session table grow very rapidly. 
 Since no specific use of old sessions has been defined, a delete policy could be considerated, for example running a cron job that deletes sessions older than 30 days, for example, or moving such sessions into another table used as archive.
 
-## JWT Revocation Delay
+### JWT Revocation Delay
 
 JWT access tokens are stateless and are therefore not validated against the Authentication Service once issued.
 
 As a consequence, revoking or expiring a user session does not immediately invalidate already issued access tokens. A JWT remains valid until its expiration time.
 
 This limitation is partially mitigated by keeping the access token lifetime intentionally short (5 minutes), reducing the exposure window while preserving the scalability benefits of local JWT validation.
+
+### Protected Service Design
+This work had the main focus on the development of an authorization system that could access a protected service. For this reason, a great part of the effort went to such auth service, while giving a protected service the role of a mock service, with no particular effort on design, scalability and technology considerations. Anything further would go beyond the scope of this work.
+
 
 ### No Automatic Service Registry Synchronization
 
