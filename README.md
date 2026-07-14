@@ -13,7 +13,7 @@ Short assignment on authentication.
 
 `./scripts/start.sh`
 
-If for any reason it fails (for example due to windows CRLF in .sh), follow the steps below: you will execute the bash commands manually.
+If for any reason it fails, follow the steps below: you will execute the bash commands manually.
 
 ## Manual Setup
 
