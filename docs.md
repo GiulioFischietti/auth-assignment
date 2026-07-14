@@ -179,7 +179,7 @@ The **Protected Service**, implemented in Go, validates JWT access tokens indepe
 All components are containerized using **Docker**, allowing each service and its dependencies to run in isolated environments while maintaining a reproducible deployment process. This approach reflects common practices used in distributed systems, where services can be developed, deployed and scaled independently.
 
 ## [4.2 Go Backend Architecture](#42-go-backend-architecture)
-From a software engineering perspective, Go encourages a simple and explicit programming model. The language favors composition over inheritance, has a relatively small standard library with extensive networking support, and integrates naturally with dependency injection through interfaces. These characteristics contribute to codebases that are easier to maintain, test and evolve.
+From a software engineering perspective, Go encourages a simple and explicit programming model. The language has a relatively small standard library with extensive networking support, and integrates naturally with dependency injection through interfaces. These characteristics contribute to codebases that are easier to maintain, test and evolve.
 
 The backend follows a layered architecture based on the Repository Pattern, separating HTTP handling, business logic and persistence concerns into distinct layers. This separation promotes loose coupling between components, improves unit testability through interface-based mocking, and allows infrastructure details—such as PostgreSQL, Redis or future storage technologies—to evolve independently from the business logic.
 
@@ -226,15 +226,13 @@ This approach provides several advantages:
 * reduced coupling between business logic and infrastructure components;
 * easier evolution of the system as new storage requirements are introduced.
 
----
-
 ## [4.3 PostgreSQL](43-postgresql)
   
-PostgreSQL is used as the authoritative datastore for authentication data. Since the Authentication Service is responsible for issuing credentials that grant access to protected resources, correctness and consistency take priority over raw scalability. For this reason, a relational database with strong ACID guarantees represents a suitable choice.
+PostgreSQL is used as the primary datastore for authentication data. Since the Authentication Service is responsible for issuing credentials that grant access to protected resources, correctness and consistency take priority over raw scalability. For this reason, a relational database with strong ACID guarantees represents a suitable choice.
 
 Authentication data naturally forms a relational domain: users own sessions, services are registered and authorized, and future extensions may introduce concepts such as roles, permissions or groups. PostgreSQL provides native mechanisms such as foreign keys, unique constraints and transactional guarantees to enforce these relationships directly at the database level, reducing the amount of consistency logic required in the application.
 
-By contrast, while NoSQL databases such as MongoDB excel at horizontal scalability and flexible schemas, maintaining complex relationships often relies more heavily on application logic. As the domain evolves, ensuring referential integrity and coordinating related updates becomes the responsibility of the backend rather than the database itself.
+By contrast, while NoSQL databases such as MongoDB are great for horizontal scalability and flexible schemas, maintaining complex relationships often relies more heavily on application logic. As the domain evolves, ensuring referential integrity and coordinating related updates becomes the responsibility of the backend rather than the database itself.
 
 The relational model therefore provides a more robust foundation for authentication and authorization data, where preserving integrity is generally more important than maximizing write scalability. NoSQL databases remain an excellent choice for other domains—such as document-oriented business data—where schema flexibility and horizontal scaling are the primary concerns rather than strict relational consistency.
 
@@ -266,7 +264,6 @@ The session table stores persistent information about authenticated sessions.
 | `id`                 | Primary key of the session record.                       |
 | `user_id`            | Foreign key referencing the authenticated user.          |
 | `session_token_hash` | Hash of the session token stored for security reasons.   |
-| `created_at`         | Session creation timestamp.                              |
 | `expires_at`         | Session expiration timestamp.                            |
 | `revoked_at`         | Optional timestamp used for explicit session revocation. |
 
@@ -301,7 +298,7 @@ The following indexes are defined:
 | ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `users`            | `username`           | Usernames are unique: this index provides efficient user lookup during log in.                           |
 | `sessions`         | `session_token_hash` | Allows efficient session retrieval, useful whenever a user asks for a new access token and its session token must be validated.  |
-| `service_registry` | `service_name`       | Allows fast service lookup during access token JWT audience validation and prevents duplicate service registrations.                  |
+| `services` | `name`       | Allows fast service lookup during access token JWT audience validation and prevents duplicate service registrations.                  |
 
 PostgreSQL automatically creates a unique B-tree index for columns defined with a `UNIQUE` constraint. This is particularly useful for authentication data, where most queries are equality-based lookups rather than range queries.
 
@@ -310,15 +307,15 @@ The `session_token_hash` index is especially important because session validatio
 
 ### [4.4 Redis](44-redis)
 
-Redis is used as a high-performance cache layer for session retrieval.
+Redis is used as a cache layer for session retrieval.
 
-Sessions are accessed frequently during authentication flows, especially when exchanging a session token for a JWT access token. Performing every lookup directly against PostgreSQL would introduce unnecessary database load and latency.
+Sessions are accessed frequently during authentication flows, for example when validating session tokens, which must be retrieved and validated in order to generate a JWT access token. Performing every lookup directly against PostgreSQL would introduce unnecessary database load and latency.
 
 Redis is therefore used following a cache-aside strategy, while PostgreSQL remains the source of truth.
 
 ### Session Key Design
 
-Session entries are stored using a deterministic key format:
+Session entries are stored using a the following key format:
 
 ```text
 session:<session_token_hash>=<user_id>
@@ -332,7 +329,7 @@ Example:
 session:a8f91c2d7e4b... = 123
 ```
 
-Keeping the cached object small reduces memory usage and improves lookup efficiency.
+This allows us to query for session tokens and easily retrieve the user_id which will be put in the JWT claims.
 
 ---
 
@@ -359,7 +356,7 @@ The TTL represents the maximum lifetime of the authenticated session, while JWT 
 
 ### Service Registry Cache
 
-Service registry information is also suitable for caching because it changes infrequently compared to how often it is read.
+Service registry information is also suitable for caching as it is read very frequently for JWT Access token generation.
 
 The chosen key format is the following:
 
@@ -375,7 +372,6 @@ service:orders-service = true
 
 This avoids repeated database lookups during token generation while keeping PostgreSQL as the authoritative source.
 
-Because service registration changes are administrative operations rather than runtime events, cache invalidation can be handled explicitly when services are added, removed or disabled.
 
 ## [5. Request Flow](5-request-flow)
 In this section it is explained the request flow, showing which services act and how.
@@ -391,16 +387,18 @@ If success, a success response is sent to the user.
 </div>
 
 ### [5.2 Log In](52-login)
-In the log in we exploit SQL transaction to ensure consistency: when the user succesfully logs in, a session token is generated and it is saved in postgres session table. If such operation completes succesfully, the session token is returned to the user while being saved in redis cache for faster access (with a TTL equal to the life of the session token), when for example creating short lived tokens, which is by definition a much frequent operation.
-If the insert in postgres fails, the whole operation rolls back, returning an error message to the user, to ensure consistency.
+In the log in we exploit SQL transaction to ensure consistency: when the user succesfully logs in, a session token is generated and it is saved in postgres session table. If such operation completes succesfully, the session token is returned to the user while being saved in redis cache for later faster access (with a TTL equal to the life of the session token). This is useful when for creating short lived tokens, which is by definition a much frequent operation than log in.
+
+If the insert in postgres fails, the whole operation rolls back, returning an error message to the user, ensuring consistency.
 
 <div align="center">
 <img src="./images/login.png" style="width: 75%; height: auto;" alt="Log In">
 </div>
 
 ### [5.3 Token](53-token)
-In this request the user asks for an access token, which allows it to access a specific protected service.
-First, its session token and service names must be validated: first, they are searched in the Redis database, if they're not available they are searched in the postgres db (service names are found in the service registry table, while session tokens in the session table) the auth service generates an access token which is returned to the user. 
+In this request the user asks for an access token to access a specific protected service.
+
+First, its session token and service names must be validated: then, they are searched in the Redis database, then, if they're not available, they are searched in the postgres db (service names are found in the service registry table, while session tokens in the session table). Finally, the auth service generates an access token which is returned to the user. 
 If any information was found in postgres but not in redis, it is also copied in redis cache while the access token is returned to the user, for faster reads in the future.
 If session token/service name is not valid, obviously, an error is returned.
 
@@ -481,7 +479,7 @@ Separating signing and verification keys minimizes the impact of a compromise af
 
 The current implementation communicates over HTTP for simplicity and ease of local development.
 
-In a production environment, all communication between clients and services, as well as inter-service communication, should be protected using HTTPS/TLS.
+In a production environment, all communication between clients and services, as well as inter-service communication, should be protected using HTTPS.
 
 Without transport encryption, authentication credentials, session tokens and JWT access tokens could be intercepted by an attacker performing network-level attacks.
 
