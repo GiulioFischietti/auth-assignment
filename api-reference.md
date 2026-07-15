@@ -255,13 +255,7 @@ curl --location --request POST 'http://localhost:8080/logout' \
 
 ### Successful Response
 
-**200 OK**
-
-```json
-{
-    "message": "Logout completed successfully."
-}
-```
+**204 No Content**
 
 ### Possible Errors
 
