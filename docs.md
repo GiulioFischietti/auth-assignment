@@ -299,7 +299,7 @@ The following indexes are defined:
 
 PostgreSQL automatically creates a unique B-tree index for columns defined with a `UNIQUE` constraint. This is particularly useful for authentication data, where most queries are equality-based lookups rather than range queries.
 
-The `session_token_hash` index is especially important because session validation requires retrieving a session using a deterministic hash value generated from the client-provided session token. Storing and indexing the hash instead of the raw token improves security while maintaining efficient lookup performance.
+The `session_token_hash` index is especially important because session validation requires retrieving a session by session_key_hash. Storing and indexing the hash instead of the raw token improves security while maintaining efficient lookup performance.
 
 
 ### [4.4 Redis](44-redis)
