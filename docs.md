@@ -328,7 +328,6 @@ session:a8f91c2d7e4b... = 123
 
 This allows us to query for session tokens and easily retrieve the user_id which will be put in the JWT claims.
 
----
 
 ### Session TTL Strategy
 
@@ -348,8 +347,6 @@ Using Redis native expiration provides several benefits:
 * predictable memory usage.
 
 The TTL represents the maximum lifetime of the authenticated session, while JWT access tokens have a shorter lifetime. This separation allows short-lived stateless access tokens while maintaining a longer authenticated session.
-
----
 
 ### Service Registry Cache
 
