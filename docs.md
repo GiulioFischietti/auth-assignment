@@ -253,7 +253,6 @@ The username field is protected by a unique constraint to prevent multiple accou
 
 Passwords are never stored in plain text. Only the result of the hashing function is persisted, ensuring that database exposure does not directly reveal user credentials.
 
----
 
 ### Sessions
 
@@ -271,7 +270,6 @@ The relationship between users and sessions is modeled through a foreign key con
 
 PostgreSQL remains the system of record for sessions, while Redis is used as a performance optimization layer.
 
----
 
 
 ### Service Registry
@@ -286,7 +284,6 @@ The service registry stores the list of services allowed to receive JWT access t
 
 The registry is intentionally simple and does not represent runtime service discovery. The purpose of this table is authorization control: the Authentication Service only issues tokens for registered and active services.
 
----
 
 ### Indexes
 
